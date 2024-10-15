@@ -82,7 +82,7 @@ jobs:
         run: cordova build android --release -- --keystore=android.keystore --storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --alias=${{ secrets.ANDROID_KEYSTORE_ALIAS }} --password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --packageType=apk
 
       - name: Upload Android release APK
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: android-app-release
           path: platforms/android/app/build/outputs/apk/release/app-release.apk
@@ -91,7 +91,7 @@ jobs:
         run: cordova build android --release -- --keystore=android.keystore --storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --alias=${{ secrets.ANDROID_KEYSTORE_ALIAS }} --password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --packageType=bundle
 
       - name: Upload Android App Bundle
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: android-app-release
           path: platforms/android/app/build/outputs/bundle/release/app-release.aab
