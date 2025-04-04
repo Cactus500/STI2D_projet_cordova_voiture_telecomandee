@@ -1,0 +1,116 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+body {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    background-color:#000000;
+    font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    font-size:12px;
+    height:100vh;
+    margin:0px;
+    box-sizing: border-box;
+    padding: 36pt;
+    /* Padding to avoid the "unsafe" areas behind notches in the screen */
+    /*padding-top: env(safe-area-inset-top, 50px);
+    padding-right: env(safe-area-inset-right, 50px);
+    padding-bottom: env(safe-area-inset-bottom, 50px);
+    padding-left: env(safe-area-inset-left, 50px);*/
+    text-transform:uppercase;
+    width:100%;
+    color: #fff;
+    display: flex;
+}
+
+/*********************CONTAINER THINGS*********************/
+.cont {
+    display: flex;
+    gap: 22pt;
+    flex: 1 0 0;
+}
+.vert {
+    display: flex;
+    flex-direction: column;
+    gap: 22pt;
+    width: 72pt;
+}
+.horiz {
+    flex-direction: row;
+}
+
+/*********************GLOBAL ELEMENTS*********************/
+div.joystick {
+    background-color: #E0E0E0;
+    background-image: url(img/joystickbackground1.png);
+    background-size: cover;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.element {
+    background-color: #E0E0E0;
+    border-radius: 36pt;
+
+}
+
+.IO{}
+
+.bluetooth {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.gobtn {
+    background-color: #FFD400;
+    background-image: url(img/gobutton1.png);
+    background-size: cover;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 72pt;
+    flex-grow: 1;
+    scale: 1;
+    transition: 200ms 0ms cubic-bezier(.66,-0.29,.37,1.4) ;
+}
+.gobtn:active {
+    scale: 0.9;
+    transition: 200ms 0ms cubic-bezier(.66,-0.29,.37,1.4) ;
+}
+/*********************SUB-ELEMENTS*********************/
+div.stick {
+    position: absolute;
+    background-color: #000000;
+    width: 42pt;
+    aspect-ratio: 1 / 1;
+    border-radius: 36pt;
+    /*align-self: center;
+    justify-self: center;
+    /*transform: translate(-50%, -50%);*/
+    cursor: grab;
+}
+.bgood {}
+.bbad {}
+.tip {}

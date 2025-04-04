@@ -1,151 +1,57 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
 <html>
-
-<head>
-    <title>tj</title>
-    <meta name="viewport" content="user-scalable=no,width=device-width,initial-scale=1,viewport-fit=cover" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: gap: *;" />
-    <link rel="stylesheet" href="fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="bootstrap-custom.css">
-    <link rel="stylesheet" href="mobile.css">
-</head>
-
-<body>
-    <div id="main" class="container">
-        <!-- Cover Image -->
-        <div id="cover" class="row p-2 h-50">
-            <div class="col-10">
-                <h6 class="p-2 mb-5 text-light">tj</h6>
+    <head>
+        <meta charset="utf-8">
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, please refer to the docs:
+            https://cordova.apache.org/docs/en/latest/
+        Some notes:
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="css/index.css">
+        <title>AppDuVéhicule</title>
+    </head>
+    <body>
+        <div class="cont horiz">
+            <div id="joystick" class="joystick element">
+                <div id="stick" class="stick"></div>
             </div>
-            <div class="col p-2">
-                <a href="#" class="m-2 my-0 float-end text-light" data-bs-toggle="modal" data-bs-target="#about-dialog"><i class="fa fa-circle-info"></span></i></a>
-            </div>
-        </div>
-
-        <!-- Logo -->
-        <div class="row">
-            <div id="logo-container" class="d-flex justify-content-center">
-                <img id="logo" src="logo.png" class="rounded-circle" width="100" height="100">
-                <br>
-            </div>
-        </div>
-
-        <!-- Login Form -->
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card border-0 rounded-3">
-                    <div class="card-body p-4 p-sm-5">
-                        <form id="login-form" method="POST" class="needs-validation">
-                            <input id="_cordova" name="_cordova" value="true" type="hidden" />
-                            <div id="profile-buttons" class="fs-1 float-end">
-                                <a id="profile-add" href="#"><i class="fa fa-circle-plus"></i></a>
-                                <a id="profile-delete" href="#"><i class="fa fa-circle-minus"></i></a>
-                            </div>
-                            <div id="profile-container" class="form-floating mb-3">
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input id="profile" name="profile" class="form-control" placeholder="Profile Name" value="default" />
-                                <label for="profile">Profile Name</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input id="url" name="url" class="form-control" placeholder="Server or Userview URL" />
-                                <label for="url">URL</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input id="username" name="j_username" class="form-control" placeholder="Username" />
-                                <label for="username">Username</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input id="password" name="j_password" class="form-control" type="password" placeholder="Password" />
-                                <label for="password">Password</label>
-                            </div>
-                            <div class="form-check form-switch mb-3">
-                                <input id="rememberPassword" name="rememberPassword" type="checkbox" class="form-check-input" value="true" checked="checked" />
-                                <label for="rememberPassword" class="form-check-label">Remember Password</label>
-                            </div>
-                            <div id="form-buttons" class="d-grid gap-2">
-                                <button id="login" name="login" class="btn btn-primary"
-                                    onclick="return MobileApp.loginBiometric()">Login</button>
-                            </div>
-                        </form>
-                    </div>
+            <div class="cont element">
+                <div class="IO">
+                    <div class="tip"></div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- About Dialog -->
-    <div class="modal fade" id="about-dialog" tabindex="-1" role="dialog" aria-labelledby="about-dialog-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="about-dialog-long-title">About</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="modal-body">
-                    <h7>tj</h7>
-                    <div id="version">
-                        idk
-                        <br />
-                        jaquemynstite@gmail.com
-                        <br />
-                        <br />
-                        VERSION 1.0.0
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+            <div class="vert">
+                <div class="bluetooth element"></div>
+                <div class="gobtn element"></div>
             </div>
         </div>
-    </div>
-
-    <!-- Popup Modal Dialog -->
-    <div class="modal fade" id="popup-dialog" tabindex="-1" role="dialog" aria-labelledby="popup-dialog-title"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="popup-dialog-long-title"></h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h4></h4>
-                    <p></p>
-                    <div id="popup-buttons" class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loading" class="justify-content-center align-items-center">
-        <div class="spinner-grow text-primary m-1" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <div class="spinner-grow text-secondary m-1" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <div class="spinner-grow text-success m-1" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-
-    <script src="cordova.js"></script>
-    <script src="jquery/jquery-3.6.0.min.js"></script>
-    <script src="jquery/jquery.cookie.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="mobile.js"></script>
-    <script src="push.js"></script>
-    <script>
-        $(function() {
-            var homeUrl = 'idk'; // set to a Joget URL to hardcode the connection profile e.g. https://joget.example.com/jw
-            MobileApp.floatingButton = false; // set true to show a floating button in place of a navigation bar
-            MobileApp.init(homeUrl);
-        });
-    </script>
-</body>
-
+        <script src="cordova.js"></script>
+        <script src="js/index.js"></script>
+    </body>
 </html>
