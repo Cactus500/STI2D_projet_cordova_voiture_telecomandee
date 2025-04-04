@@ -1,6 +1,7 @@
 name: Build Android
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 jobs:
   build-android:
@@ -82,17 +83,17 @@ jobs:
         run: cordova build android --release -- --keystore=android.keystore --storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --alias=${{ secrets.ANDROID_KEYSTORE_ALIAS }} --password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --packageType=apk
 
       - name: Upload Android release APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: android-app-release
+          name: android-app-release1
           path: platforms/android/app/build/outputs/apk/release/app-release.apk
 
       - name: Build Android App Bundle
         run: cordova build android --release -- --keystore=android.keystore --storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --alias=${{ secrets.ANDROID_KEYSTORE_ALIAS }} --password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --packageType=bundle
 
       - name: Upload Android App Bundle
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: android-app-release
+          name: android-app-release2
           path: platforms/android/app/build/outputs/bundle/release/app-release.aab
   
