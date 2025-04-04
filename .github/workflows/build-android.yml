@@ -1,9 +1,6 @@
 name: Build Android
 
 on: 
-  push:
-    branches:
-      - main
 
 jobs:
   build-android:
