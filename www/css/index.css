@@ -30,7 +30,7 @@ body {
     height:100vh;
     margin:0px;
     box-sizing: border-box;
-    padding: 36pt;
+    padding: 26pt;
     /* Padding to avoid the "unsafe" areas behind notches in the screen */
     /*padding-top: env(safe-area-inset-top, 50px);
     padding-right: env(safe-area-inset-right, 50px);

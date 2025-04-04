@@ -5,7 +5,7 @@
     <author email="jaquemynstite@gmail.com" href="idk">tite jaquemyns</author>
     <access origin="*" />
     <allow-navigation href="*" />
-    <preference name="Fullscreen" value="false" />
+    <preference name="Fullscreen" value="true" />
     <preference name="useBrowserHistory" value="true" />
     <preference name="exit-on-suspend" value="false" />
     <preference name="stay-in-webview" value="true" />

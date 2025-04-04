@@ -28,14 +28,13 @@ function onDeviceReady() {
     document.getElementById('deviceready').classList.add('ready');
 }
 
-
 const stick = document.querySelector('.stick');
 const container = document.querySelector('.joystick');
 // Get the dimensions of the container
 const cwidth = container.offsetWidth; // Since it's a square, height = width
-const cmiddle = cwidth / 2 ;
+const cmiddle = cwidth / 2;
 
-var servo = 0 ; // position des servomoteurs
+var servo = 0; // Position des servomoteurs
 var motor = 1;
 dragElement(stick);
 
@@ -43,6 +42,7 @@ function dragElement(elmnt) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
   elmnt.onmousedown = dragMouseDown;
+  elmnt.ontouchstart = touchStart;
 
   function dragMouseDown(e) {
     e = e || window.event;
@@ -51,28 +51,41 @@ function dragElement(elmnt) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
-    // Call a function whenever the cursor moves
     document.onmousemove = elementDrag;
   }
 
+  function touchStart(e) {
+    e.preventDefault();
+    // Get the touch position at the start
+    pos3 = e.touches[0].clientX;
+    pos4 = e.touches[0].clientY;
+    document.ontouchend = closeDragElement;
+    document.ontouchmove = elementDrag;
+  }
+
   function elementDrag(e) {
+    elmnt.style.transition = "none";
     e = e || window.event;
     e.preventDefault();
-    // Calculate the new cursor position
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    // For touch events
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    // Calculate the new cursor/touch position
+    pos1 = pos3 - clientX;
+    pos2 = pos4 - clientY;
+    pos3 = clientX;
+    pos4 = clientY;
 
     // Calculate new position of the `stick`
     let newTop = elmnt.offsetTop - pos2;
     let newLeft = elmnt.offsetLeft - pos1;
 
     // Constrain the `stick` within the `joystick` container boundaries
-    const minLeft = 46; // Adjusted to allow offset for full bottom-left position
-    const maxLeft = container.offsetWidth + 50 - elmnt.offsetWidth; // Right boundary with offset
-    const minTop = 46; // Adjusted to allow offset for full bottom-left position
-    const maxTop = container.offsetHeight + 50 - elmnt.offsetHeight; // Bottom boundary with offset
+    const minLeft = 34;
+    const maxLeft = container.offsetWidth + 36 - elmnt.offsetWidth;
+    const minTop = 34;
+    const maxTop = container.offsetHeight + 36 - elmnt.offsetHeight;
 
     newTop = Math.min(Math.max(newTop, minTop), maxTop);
     newLeft = Math.min(Math.max(newLeft, minLeft), maxLeft);
@@ -81,36 +94,39 @@ function dragElement(elmnt) {
     elmnt.style.top = newTop + "px";
     elmnt.style.left = newLeft + "px";
     console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
-    
 
-    //RightLeft turn movement
-    servo = Math.trunc(((stick.offsetLeft / cwidth) * 90) + 45);
+    // RightLeft turn movement
+    servo = ((stick.offsetLeft / cwidth) * 90) + 45;
 
     if (90 < servo && servo < 100) {
-        servo = 90;
+      servo = 90;
     } else {
-        servo = servo;
-    };
+      servo = servo;
+    }
 
-    if (stick.offsetTop < (cmiddle + 20)) {
-        motor = 1;
-    } else if (stick.offsetTop > (cmiddle + 20)){
-        motor = -1;
+    if (stick.offsetTop < (cmiddle + 6.5)) {
+      motor = 1;
+    } else if (stick.offsetTop > (cmiddle + 6.5)) {
+      motor = -1;
     } else {
-        motor = 0;
-    };
+      motor = 0;
+    }
     console.log(`Servo : ${servo}, Motors : ${motor}`);
-  };
+  }
 
   function closeDragElement() {
-    // Stop moving when mouse button is released
+    // Stop moving when mouse/touch is released
     document.onmouseup = null;
     document.onmousemove = null;
-    elmnt.style.left = cmiddle + 20 + "px";
-    elmnt.style.top = cmiddle + 20 + "px";
+    document.ontouchend = null;
+    document.ontouchmove = null;
+    elmnt.style.transition = "cubic-bezier(.6,1.55,.65,1) 300ms 0ms";
+    elmnt.style.left = cmiddle + 6.5 + "px";
+    elmnt.style.top = cmiddle + 6.5 + "px";
     console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
     servo = 90;
     motor = 0;
     console.log(`Servo : ${servo}, Motors : ${motor}`);
+    
   }
 }
