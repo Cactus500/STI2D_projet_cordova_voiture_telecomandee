@@ -1,6 +1,9 @@
 name: Build Android
 
-on: [workflow_dispatch]
+on: 
+  push:
+    branches:
+      - main
 
 jobs:
   build-android:
