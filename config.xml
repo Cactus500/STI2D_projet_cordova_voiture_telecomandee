@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-activityName="CustomMobile" android-packageName="com.example.custom.mobile" android-versionCode="10000" id="com.example.custom.mobile" ios-CFBundleVersion="1.0.0" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>Custom Mobile</name>
-    <description>Custom Mobile</description>
-    <author email="info@example.com" href="https://www.example.com">Example Inc</author>
+<widget android-activityName="CustomMobile" android-packageName="com.app.du.vehicule" android-versionCode="10000" id="com.app.du.vehicule" ios-CFBundleVersion="1.0.0" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>tj</name>
+    <description>tj</description>
+    <author email="jaquemynstite@gmail.com" href="idk">tite jaquemyns</author>
     <access origin="*" />
     <allow-navigation href="*" />
     <preference name="Fullscreen" value="false" />
@@ -72,7 +72,7 @@
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <provider
                 android:name="androidx.core.content.FileProvider"
-                android:authorities="com.example.custom.mobile.provider"
+                android:authorities="com.app.du.vehicule.provider"
                 android:exported="false"
                 android:grantUriPermissions="true">
                 <meta-data
@@ -90,7 +90,7 @@
     <platform name="ios">
         <preference name="deployment-target" value="11.0" />
         <preference name="SwiftVersion" value="5.0" />
-        <resource-file src="GoogleService-Info.plist" />
+        <!--<resource-file src="GoogleService-Info.plist" />-->
         <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>Need camera access for file uploads</string>
         </edit-config>
