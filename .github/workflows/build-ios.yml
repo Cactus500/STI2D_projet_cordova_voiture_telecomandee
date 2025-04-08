@@ -1,6 +1,7 @@
 name: Build iOS
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 env:
   TEAM_ID: CQHX8VZ8F7
