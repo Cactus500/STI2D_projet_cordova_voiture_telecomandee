@@ -56,7 +56,15 @@ document.addEventListener('click', () => {
     }
 });
 
+let currentOscillator = null; // Track the currently playing oscillator
+
 function playNote(frequency, duration) {
+    // Stop the current oscillator if it exists
+    if (currentOscillator) {
+        currentOscillator.stop();
+        currentOscillator.disconnect();
+    }
+
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain(); // Create a GainNode for volume control
 
@@ -71,8 +79,15 @@ function playNote(frequency, duration) {
 
     oscillator.start();
 
+    // Set the current oscillator
+    currentOscillator = oscillator;
+
     setTimeout(() => {
         oscillator.stop();
+        oscillator.disconnect();
+        if (currentOscillator === oscillator) {
+            currentOscillator = null; // Clear the current oscillator if it matches
+        }
     }, duration);
 }
 
@@ -168,18 +183,23 @@ function dragElement(elmnt) {
     
     console.log(`Servo : ${servo}, Motors : ${motor}`);
 
+    // Play note based on servo position
+    playNote(servo * 10, 1000);
+
     // Send data over Bluetooth
-    const dataToSend = JSON.stringify({s: servo, m: motor });
-    bluetoothSerial.write(dataToSend,
-        function() { 
-            console.log("Data sent successfully:", dataToSend); 
-            playNote(servo * 10, 1000); // Play note based on servo position
-        },
-        function(error) { 
-            console.error("Error sending data:", error); 
-            playNote(0, 1000); // Error sound
-        }
-    );
+    const dataToSend = JSON.stringify({ s: servo, m: motor });
+    if (typeof bluetoothSerial !== 'undefined') {
+        bluetoothSerial.write(dataToSend,
+            function() {
+                console.log("Data sent successfully:", dataToSend);
+            },
+            function(error) {
+                console.error("Error sending data:", error);
+            }
+        );
+    } else {
+        console.warn("bluetoothSerial is not available. Data not sent:", dataToSend);
+    }
   }
 
   function closeDragElement() {
@@ -198,18 +218,23 @@ function dragElement(elmnt) {
 
     console.log(`Servo : ${servo}, Motors : ${motor}`);
 
+    // Play reset sound
+    playNote(1200, 100);
+
     // Send reset data over Bluetooth
     const resetData = JSON.stringify({ servo: 90, motor: 0 });
-    bluetoothSerial.write(resetData,
-        function() { 
-            console.log("Reset data sent successfully:", resetData); 
-            playNote(1200, 100); // Reset sound
-        },
-        function(error) { 
-            console.error("Error sending reset data:", error); 
-            playNote(1200, 100); // Error sound
-        }
-    );
+    if (typeof bluetoothSerial !== 'undefined') {
+        bluetoothSerial.write(resetData,
+            function() {
+                console.log("Reset data sent successfully:", resetData);
+            },
+            function(error) {
+                console.error("Error sending reset data:", error);
+            }
+        );
+    } else {
+        console.warn("bluetoothSerial is not available. Reset data not sent:", resetData);
+    }
   }
 }
 
@@ -223,19 +248,24 @@ IO.addEventListener('click', function () {
     document.getElementById("LED").style.backgroundColor = isLedOn ? '#FFCC00' : '#C3C3C3';
     tip.style.backgroundColor = isLedOn ? '#FFCC00' : '#C3C3C3';
 
+    // Play note for LED on/off
+    playNote(isLedOn ? 1000 : 500, 100);
+
     // Determine LED state
     const ledState = isLedOn ? 1 : 0;
 
     // Send LED state over Bluetooth
     const ledData = JSON.stringify({ led: ledState });
-    bluetoothSerial.write(ledData,
-        function () { 
-            console.log("LED state sent successfully:", ledData); 
-            playNote(isLedOn ? 1000 : 500, 100); // Play note for LED on/off
-        },
-        function (error) { 
-            console.error("Error sending LED state:", error); 
-            playNote(1500, 100); // Error sound
-        }
-    );
+    if (typeof bluetoothSerial !== 'undefined') {
+        bluetoothSerial.write(ledData,
+            function() {
+                console.log("LED state sent successfully:", ledData);
+            },
+            function(error) {
+                console.error("Error sending LED state:", error);
+            }
+        );
+    } else {
+        console.warn("bluetoothSerial is not available. LED state not sent:", ledData);
+    }
 });
