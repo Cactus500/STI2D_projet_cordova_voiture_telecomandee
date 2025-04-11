@@ -60,7 +60,7 @@ body {
 
 /*********************GLOBAL ELEMENTS*********************/
 div.joystick {
-    background-color: #E0E0E0;
+    background-color: #FFCC00;
     background-image: url(img/joystickbackground1.png);
     background-size: cover;
     background-size: 100%;
@@ -72,33 +72,46 @@ div.joystick {
 }
 
 .element {
-    background-color: #E0E0E0;
+    background-color: #C3C3C3;
     border-radius: 36pt;
-
+    justify-content: center;
+    transition: 300ms 0ms cubic-bezier(.32,1.44,.59,.99) ;
 }
 
-.IO{}
+.IO{
+    width: 72pt;
+    height: 42pt;
+    background-color: #000000;
+    border-radius: 21pt;
+    place-self: center;
+    align-content: center;
+    box-sizing: border-box;
+    padding: 14pt;
+    
+}
 
 .bluetooth {
     width: 100%;
+    background-color: #C3C3C3;
     aspect-ratio: 1 / 1;
 }
 
 .gobtn {
-    background-color: #FFD400;
-    background-image: url(img/gobutton1.png);
+    background-color: #c3c3c3;
+    background-image: url(img/gobutton2.png);
     background-size: cover;
     background-size: 100%;
     background-repeat: no-repeat;
+    background-position: center;
     width: 72pt;
     flex-grow: 1;
     scale: 1;
-    transition: 200ms 0ms cubic-bezier(.66,-0.29,.37,1.4) ;
+    transition: 200ms 0ms cubic-bezier(.32,1.44,.59,.99) ;
 }
-.gobtn:active {
+/*.gobtn:active {
     scale: 0.9;
-    transition: 200ms 0ms cubic-bezier(.66,-0.29,.37,1.4) ;
-}
+    transition: 200ms 0ms cubic-bezier(.32,1.44,.59,.99) ;
+}*/
 /*********************SUB-ELEMENTS*********************/
 div.stick {
     position: absolute;
@@ -113,4 +126,12 @@ div.stick {
 }
 .bgood {}
 .bbad {}
-.tip {}
+.tip {
+    aspect-ratio: 1 / 1;
+    width: 14pt;
+    border-radius: 7pt;
+    background-color: #C3C3C3;
+    left: 0pt;
+    position: relative;
+    transition: 300ms 0ms cubic-bezier(.32,1.44,.59,.99) ;
+}

@@ -1,0 +1,42 @@
+IO.addEventListener("click", function () {
+  var isRight = IO.style.justifyContent === 'flex-end';
+  IO.style.justifyContent = isRight ? 'flex-start' : 'flex-end';
+  // Determine LED state
+  var ledState = isRight ? 0 : 1;
+  
+  // Send LED state over Bluetooth
+  var ledData = JSON.stringify({ led: ledState });
+  bluetoothSerial.write(ledData,
+    function () { console.log("LED state sent successfully:", ledData); },
+    function (error) { console.error("Error sending LED state:", error); }
+  );
+});
+
+
+var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+
+function playNote(frequency, duration) {
+  // create Oscillator node
+  var oscillator = audioCtx.createOscillator();
+
+  oscillator.type = 'square';
+  oscillator.frequency.value = frequency; // value in hertz
+  oscillator.connect(audioCtx.destination);
+  oscillator.start();
+
+  setTimeout(
+    function() {
+      oscillator.stop();
+      playMelody();
+    }, duration);
+}
+
+
+playNote(servo * 10, 100); // Play note based on servo position
+if (motor == 1) {
+  playNote(1000, 100); // Play note for forward movement
+else if (motor == -1) {
+  playNote(500, 100); // Play note for backward movement
+} else {
+  playNote(1500, 100); // Stop sound when not moving
+}

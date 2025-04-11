@@ -6,6 +6,7 @@
     <access origin="*" />
     <allow-navigation href="*" />
     <preference name="Fullscreen" value="true" />
+    <preference name="orientation" value="landscape" />
     <preference name="useBrowserHistory" value="true" />
     <preference name="exit-on-suspend" value="false" />
     <preference name="stay-in-webview" value="true" />
@@ -28,6 +29,7 @@
     </feature>
     <content src="index.html" />
     <icon src="res/logo_120x120.png" />
+    <plugin name="cordova-plugin-bluetooth-serial" spec="^0.4.7" />
     <platform name="android">
         <resource-file src="android-google-services.json" target="app/google-services.json" />
         <resource-file src="res/xml/file_paths.xml" target="app/src/main/res/xml/file_paths.xml" />

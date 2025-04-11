@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "cordova-plugin-bluetooth-serial": "^0.4.7"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-bluetooth-serial": {}
+    }
+  }
+}
