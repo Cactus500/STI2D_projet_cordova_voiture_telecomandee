@@ -57,6 +57,7 @@ document.addEventListener('click', () => {
 });
 
 let currentOscillator = null; // Track the currently playing oscillator
+let motorOscillator = null; // Track the motor sound oscillator
 
 function playNote(frequency, duration) {
     // Stop the current oscillator if it exists
@@ -91,6 +92,39 @@ function playNote(frequency, duration) {
     }, duration);
 }
 
+function playMotorSound(frequency, duration) {
+    // Stop the current motor oscillator if it exists
+    if (motorOscillator) {
+        motorOscillator.stop();
+        motorOscillator.disconnect();
+    }
+
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain(); // Create a GainNode for volume control
+
+    oscillator.type = 'square';
+    oscillator.frequency.value = frequency; // Frequency in hertz
+
+    gainNode.gain.value = 0.5; // Set volume (adjust as needed)
+
+    // Connect oscillator to gain node, then to destination
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+
+    // Set the motor oscillator
+    motorOscillator = oscillator;
+
+    setTimeout(() => {
+        oscillator.stop();
+        oscillator.disconnect();
+        if (motorOscillator === oscillator) {
+            motorOscillator = null; // Clear the motor oscillator if it matches
+        }
+    }, duration);
+}
+
 // Add a test button handler to play a test sound
 document.getElementById('testSound').addEventListener('click', () => {
     playNote(440, 1000); // Play a 440 Hz sound for 1 second
@@ -104,6 +138,7 @@ const cmiddle = cwidth / 2;
 
 var servo = 0; // Position des servomoteurs
 var motor = 1;
+let lastMotorState = null; // Track the last motor state
 dragElement(stick);
 
 function dragElement(elmnt) {
@@ -173,18 +208,34 @@ function dragElement(elmnt) {
       servo = servo;
     }
 
+    // Determine motor state
+    let newMotorState;
     if (stick.offsetTop < (cmiddle + 6.5)) {
-      motor = 1;
+        newMotorState = 1; // Forward
     } else if (stick.offsetTop > (cmiddle + 6.5)) {
-      motor = -1;
+        newMotorState = -1; // Backward
     } else {
-      motor = 0;
+        newMotorState = 0; // Stop
     }
-    
+
+    // Play motor sound only if motor state has changed
+    if (newMotorState !== lastMotorState) {
+        if (newMotorState === 1) {
+            playMotorSound(800, 300); // Forward movement
+        } else if (newMotorState === -1) {
+            playMotorSound(600, 300); // Backward movement
+        } else {
+            playMotorSound(700, 300); // Stop
+        }
+        lastMotorState = newMotorState; // Update the last motor state
+    }
+
+    motor = newMotorState;
+
     console.log(`Servo : ${servo}, Motors : ${motor}`);
 
     // Play note based on servo position
-    playNote(servo * 10, 1000);
+    playNote(servo * 10, 1000); //45-55 so it goes from 450hz to 550hz
 
     // Send data over Bluetooth
     const dataToSend = JSON.stringify({ s: servo, m: motor });
