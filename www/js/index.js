@@ -300,7 +300,7 @@ IO.addEventListener('click', function () {
     tip.style.backgroundColor = isLedOn ? '#FFCC00' : '#C3C3C3';
 
     // Play note for LED on/off
-    playNote(isLedOn ? 1000 : 500, 100);
+    playNote(isLedOn ? 1300 : 700, 100);
 
     // Determine LED state
     const ledState = isLedOn ? 1 : 0;
