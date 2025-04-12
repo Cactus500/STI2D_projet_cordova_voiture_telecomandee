@@ -69,7 +69,7 @@ function playNote(frequency, duration) {
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain(); // Create a GainNode for volume control
 
-    oscillator.type = 'square';
+    oscillator.type = 'sine'; // Type of wave (sine, square, sawtooth, triangle)
     oscillator.frequency.value = frequency; // Frequency in hertz
 
     gainNode.gain.value = 0.5; // Set volume (adjust as needed)
@@ -102,7 +102,7 @@ function playMotorSound(frequency, duration) {
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain(); // Create a GainNode for volume control
 
-    oscillator.type = 'square';
+    oscillator.type = 'sine';
     oscillator.frequency.value = frequency; // Frequency in hertz
 
     gainNode.gain.value = 0.5; // Set volume (adjust as needed)
@@ -136,7 +136,7 @@ const container = document.querySelector('.joystick');
 const cwidth = container.offsetWidth; // Since it's a square, height = width
 const cmiddle = cwidth / 2;
 
-var servo = 0; // Position des servomoteurs
+servo = 0; // Position des servomoteurs
 var motor = 1;
 let lastMotorState = null; // Track the last motor state
 dragElement(stick);
@@ -200,7 +200,7 @@ function dragElement(elmnt) {
     console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
 
     // RightLeft turn movement
-    servo = ((stick.offsetLeft / cwidth) * 90) + 45;
+    servo = (((stick.offsetLeft / cwidth) * 97.5) + 40).toFixed();
 
     if (90 < servo && servo < 100) {
       servo = 90;
@@ -223,9 +223,9 @@ function dragElement(elmnt) {
         if (newMotorState === 1) {
             playMotorSound(800, 300); // Forward movement
         } else if (newMotorState === -1) {
-            playMotorSound(600, 300); // Backward movement
+            playMotorSound(1000, 300); // Backward movement
         } else {
-            playMotorSound(700, 300); // Stop
+            playMotorSound(1200, 300); // Stop
         }
         lastMotorState = newMotorState; // Update the last motor state
     }
@@ -235,7 +235,7 @@ function dragElement(elmnt) {
     console.log(`Servo : ${servo}, Motors : ${motor}`);
 
     // Play note based on servo position
-    playNote(servo * 10, 1000); //45-55 so it goes from 450hz to 550hz
+    playNote(servo * 5, 1000); // Adjust frequency based on servo position
 
     // Send data over Bluetooth
     const dataToSend = JSON.stringify({ s: servo, m: motor });
@@ -270,7 +270,7 @@ function dragElement(elmnt) {
     console.log(`Servo : ${servo}, Motors : ${motor}`);
 
     // Play reset sound
-    playNote(1200, 100);
+    playNote(1000, 100);
 
     // Send reset data over Bluetooth
     const resetData = JSON.stringify({ servo: 90, motor: 0 });
