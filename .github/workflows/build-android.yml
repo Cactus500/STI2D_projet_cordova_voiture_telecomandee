@@ -24,7 +24,11 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-  
+        
+      - name: Install Android Build Tools
+        run: |
+          sdkmanager "build-tools;33.0.2"
+
       - name: Import Android keystore and Google services JSON
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
