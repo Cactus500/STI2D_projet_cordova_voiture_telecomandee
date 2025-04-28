@@ -20,10 +20,43 @@
 
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 // Wait for the deviceready event before using any of Cordova's device APIs.
+// Add function to handle Bluetooth connection to the vehicle
+function connectToVehicle() {
+    const vehicleAddress = ""; // Add the Bluetooth address of the vehicle here
+
+    if (typeof bluetoothSerial === 'undefined') {
+        console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
+        return;
+    }
+
+    if (!vehicleAddress) {
+        console.warn("Vehicle address is not set. Please provide the address.");
+        return;
+    }
+
+    bluetoothSerial.connect(
+        vehicleAddress,
+        function() {
+            console.log("Successfully connected to the vehicle at address:", vehicleAddress);
+            document.querySelector('.bluetooth').style.backgroundColor = '#00FF00'; // Indicate successful connection
+        },
+        function(error) {
+            console.error("Failed to connect to the vehicle:", error);
+            document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
+        }
+    );
+}
+
+// Wait for the deviceready event before using any of Cordova's device APIs.
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
+    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+
+    // Attempt to connect to the vehicle via Bluetooth
+    connectToVehicle();
+
     if (typeof bluetoothSerial === 'undefined') {
         console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
         return;
@@ -40,7 +73,6 @@ function onDeviceReady() {
         }
     );
 
-    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
 }
 
