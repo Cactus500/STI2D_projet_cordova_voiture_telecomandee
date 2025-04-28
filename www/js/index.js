@@ -238,7 +238,7 @@ function dragElement(elmnt) {
     playNote(servo * 5, 1000); // Adjust frequency based on servo position
 
     // Send data over Bluetooth
-    const dataToSend = JSON.stringify({ s: servo, m: motor });
+    const dataToSend = JSON.stringify({ S: servo, M: motor, \n });
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(dataToSend,
             function() {
@@ -273,7 +273,7 @@ function dragElement(elmnt) {
     playNote(1000, 100);
 
     // Send reset data over Bluetooth
-    const resetData = JSON.stringify({ servo: 90, motor: 0 });
+    const resetData = JSON.stringify({ S: 90, M: 0, \n});
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(resetData,
             function() {
@@ -306,7 +306,7 @@ IO.addEventListener('click', function () {
     const ledState = isLedOn ? 1 : 0;
 
     // Send LED state over Bluetooth
-    const ledData = JSON.stringify({ led: ledState });
+    const ledData = JSON.stringify({ L: ledState \n});
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(ledData,
             function() {
