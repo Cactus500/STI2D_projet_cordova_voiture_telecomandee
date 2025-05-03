@@ -22,15 +22,19 @@
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // Add function to handle Bluetooth connection to the vehicle
 function connectToVehicle() {
-    const vehicleAddress = ""; // Add the Bluetooth address of the vehicle here
+    const vehicleAddress = "98:D3:51:F5:AB:0A"; // Add the Bluetooth address of the vehicle here
 
     if (typeof bluetoothSerial === 'undefined') {
         console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
+        alert("Il y a un probleme avec bluetoothSerial. Veuillez vérifier l'installation du plugin.");
+        document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
         return;
     }
 
     if (!vehicleAddress) {
         console.warn("Vehicle address is not set. Please provide the address.");
+        alert("L'adresse du véhicule n'est pas définie. Veuillez la fournir.");
+        document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
         return;
     }
 
@@ -38,10 +42,12 @@ function connectToVehicle() {
         vehicleAddress,
         function() {
             console.log("Successfully connected to the vehicle at address:", vehicleAddress);
+            alert("Le véhicule est connecté avec succès à l'adresse: " + vehicleAddress);
             document.querySelector('.bluetooth').style.backgroundColor = '#00FF00'; // Indicate successful connection
         },
         function(error) {
             console.error("Failed to connect to the vehicle:", error);
+            alert("le véhicule n'est pas connecté. Veuillez vérifier l'adresse Bluetooth.");
             document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
         }
     );
