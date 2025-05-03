@@ -21,7 +21,7 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // Add function to handle Bluetooth connection to the vehicle
-function connectToVehicle() {
+async function connectToVehicle() {
     const vehicleAddress = "98:D3:51:F5:AB:0A"; // Add the Bluetooth address of the vehicle here
 
     if (typeof bluetoothSerial === 'undefined') {
