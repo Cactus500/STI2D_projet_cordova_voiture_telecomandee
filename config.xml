@@ -48,18 +48,18 @@
         <icon density="mdpi" src="res/icon.png" />
         <icon density="hdpi" src="res/icon.png" />
         <icon density="xhdpi" src="res/icon.png" />
-        <splash density="hdpi" src="res/splash_640x1136.png" />
-        <splash density="ldpi" src="res/splash_640x1136.png" />
-        <splash density="mdpi" src="res/splash_640x1136.png" />
-        <splash density="xhdpi" src="res/splash_640x1136.png" />
-        <splash density="land-hdpi" src="res/splash_640x1136.png" />
-        <splash density="land-ldpi" src="res/splash_640x1136.png" />
-        <splash density="land-mdpi" src="res/splash_640x1136.png" />
-        <splash density="land-xhdpi" src="res/splash_640x1136.png" />
-        <splash density="port-hdpi" src="res/splash_640x1136.png" />
-        <splash density="port-ldpi" src="res/splash_640x1136.png" />
-        <splash density="port-mdpi" src="res/splash_640x1136.png" />
-        <splash density="port-xhdpi" src="res/splash_640x1136.png" />
+        <preference density="hdpi" src="res/splash_640x1136.png" />
+        <preference density="ldpi" src="res/splash_640x1136.png" />
+        <preference density="mdpi" src="res/splash_640x1136.png" />
+        <preference density="xhdpi" src="res/splash_640x1136.png" />
+        <preference density="land-hdpi" src="res/splash_640x1136.png" />
+        <preference density="land-ldpi" src="res/splash_640x1136.png" />
+        <preference density="land-mdpi" src="res/splash_640x1136.png" />
+        <preference density="land-xhdpi" src="res/splash_640x1136.png" />
+        <preference density="port-hdpi" src="res/splash_640x1136.png" />
+        <preference density="port-ldpi" src="res/splash_640x1136.png" />
+        <preference density="port-mdpi" src="res/splash_640x1136.png" />
+        <preference density="port-xhdpi" src="res/splash_640x1136.png" />
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
