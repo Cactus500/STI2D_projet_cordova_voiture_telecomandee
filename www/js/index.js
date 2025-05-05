@@ -21,7 +21,7 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // Add function to handle Bluetooth connection to the vehicle
-async function connectToVehicle() {
+function connectToVehicle() {
     const vehicleAddress = "98:D3:51:F5:AB:0A"; // Add the Bluetooth address of the vehicle here
 
     if (typeof bluetoothSerial === 'undefined') {
@@ -276,7 +276,7 @@ function dragElement(elmnt) {
     playNote(servo * 5, 1000); // Adjust frequency based on servo position
 
     // Send data over Bluetooth
-    const dataToSend = JSON.stringify({ S: servo, M: motor, \n });
+    const dataToSend = JSON.stringify({ S: servo, M: motor} + "\n");
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(dataToSend,
             function() {
@@ -311,7 +311,7 @@ function dragElement(elmnt) {
     playNote(1000, 100);
 
     // Send reset data over Bluetooth
-    const resetData = JSON.stringify({ S: 90, M: 0, \n});
+    const resetData = JSON.stringify({ S: 90, M: 0} + "\n");
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(resetData,
             function() {
@@ -344,7 +344,7 @@ IO.addEventListener('click', function () {
     const ledState = isLedOn ? 1 : 0;
 
     // Send LED state over Bluetooth
-    const ledData = JSON.stringify({ L: ledState \n});
+    const ledData = JSON.stringify({ L: ledState} + "\n");
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(ledData,
             function() {
