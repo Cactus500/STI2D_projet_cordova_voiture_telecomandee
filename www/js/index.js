@@ -69,6 +69,10 @@ function updateUI(isConnected) {
         resultDiv.style.display = 'none';
         messageInputContainer.style.display = 'none';
     }
+
+    // Ensure all buttons are visible until a device is connected
+    refreshButton.style.display = isConnected ? 'none' : 'inline-block';
+    deviceList.style.display = isConnected ? 'none' : 'block';
 }
 
 function refreshDeviceList() {
