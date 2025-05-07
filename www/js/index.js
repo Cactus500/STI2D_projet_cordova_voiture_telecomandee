@@ -21,7 +21,37 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // Add function to handle Bluetooth connection to the vehicle
-/*function connectToVehicle() {
+
+// Wait for the deviceready event before using any of Cordova's device APIs.
+document.addEventListener('deviceready', onDeviceReady, false);
+
+function onDeviceReady() {
+    // Cordova is now initialized. Have fun!
+    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+
+    // Attempt to connect to the vehicle via Bluetooth
+    connectToVehicle();
+
+    if (typeof bluetoothSerial === 'undefined') {
+        console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
+        return;
+    }
+
+    bluetoothSerial.isEnabled(
+        function() { 
+            console.log("Bluetooth is enabled.");
+            document.querySelector('.bluetooth').style.backgroundColor = '#0095FF';
+        },
+        function() { 
+            console.log("Bluetooth is not enabled."); 
+            document.querySelector('.bluetooth').style.backgroundColor = '#C3C3C3';
+        }
+    );
+
+    document.getElementById('deviceready').classList.add('ready');
+}
+
+function connectToVehicle() {
     const vehicleAddress = "98:D3:51:F5:AB:0A"; // Add the Bluetooth address of the vehicle here
 
     if (typeof bluetoothSerial === 'undefined') {
@@ -51,35 +81,6 @@
             document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
         }
     );
-}*/
-
-// Wait for the deviceready event before using any of Cordova's device APIs.
-document.addEventListener('deviceready', onDeviceReady, false);
-
-function onDeviceReady() {
-    // Cordova is now initialized. Have fun!
-    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-
-    // Attempt to connect to the vehicle via Bluetooth
-    connectToVehicle();
-
-    if (typeof bluetoothSerial === 'undefined') {
-        console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
-        return;
-    }
-
-    bluetoothSerial.isEnabled(
-        function() { 
-            console.log("Bluetooth is enabled.");
-            document.querySelector('.bluetooth').style.backgroundColor = '#0095FF';
-        },
-        function() { 
-            console.log("Bluetooth is not enabled."); 
-            document.querySelector('.bluetooth').style.backgroundColor = '#C3C3C3';
-        }
-    );
-
-    document.getElementById('deviceready').classList.add('ready');
 }
 
 // Initialize AudioContext
