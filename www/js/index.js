@@ -17,71 +17,104 @@
  * under the License.
  */
 
-
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 // Wait for the deviceready event before using any of Cordova's device APIs.
-// Add function to handle Bluetooth connection to the vehicle
 
-// Wait for the deviceready event before using any of Cordova's device APIs.
 document.addEventListener('deviceready', onDeviceReady, false);
 
+let connectedDeviceId = null;
+
 function onDeviceReady() {
-    // Cordova is now initialized. Have fun!
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-
-    // Attempt to connect to the vehicle via Bluetooth
-    connectToVehicle();
-
-    if (typeof bluetoothSerial === 'undefined') {
-        console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
-        return;
-    }
-
-    bluetoothSerial.isEnabled(
-        function() { 
-            console.log("Bluetooth is enabled.");
-            document.querySelector('.bluetooth').style.backgroundColor = '#0095FF';
-        },
-        function() { 
-            console.log("Bluetooth is not enabled."); 
-            document.querySelector('.bluetooth').style.backgroundColor = '#C3C3C3';
-        }
-    );
-
-    document.getElementById('deviceready').classList.add('ready');
+    refreshDeviceList();
+    bindBluetoothEvents();
 }
 
-function connectToVehicle() {
-    const vehicleAddress = "98:D3:51:F5:AB:0A"; // Add the Bluetooth address of the vehicle here
-
-    if (typeof bluetoothSerial === 'undefined') {
-        console.error("bluetoothSerial is not defined. Ensure the Cordova Bluetooth Serial plugin is installed.");
-        alert("Il y a un probleme avec bluetoothSerial. Veuillez vérifier l'installation du plugin.");
-        document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
-        return;
-    }
-
-    if (!vehicleAddress) {
-        console.warn("Vehicle address is not set. Please provide the address.");
-        alert("L'adresse du véhicule n'est pas définie. Veuillez la fournir.");
-        document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
-        return;
-    }
-
-    bluetoothSerial.connect(
-        vehicleAddress,
-        function() {
-            console.log("Successfully connected to the vehicle at address:", vehicleAddress);
-            alert("Le véhicule est connecté avec succès à l'adresse: " + vehicleAddress);
-            document.querySelector('.bluetooth').style.backgroundColor = '#00FF00'; // Indicate successful connection
-        },
-        function(error) {
-            console.error("Failed to connect to the vehicle:", error);
-            alert("le véhicule n'est pas connecté. Veuillez vérifier l'adresse Bluetooth.");
-            document.querySelector('.bluetooth').style.backgroundColor = '#FF3333'; // Indicate connection failure
-        }
-    );
+function bindBluetoothEvents() {
+    document.getElementById('refreshButton').addEventListener('click', refreshDeviceList, false);
+    document.getElementById('disconnectButton').addEventListener('click', disconnectDevice, false);
+    document.getElementById('deviceList').addEventListener('click', connectToDevice, false);
 }
+
+function refreshDeviceList() {
+    bluetoothSerial.list(onDeviceList, onError);
+}
+
+function onDeviceList(devices) {
+    const deviceList = document.getElementById('deviceList');
+    deviceList.innerHTML = ""; // Clear the list
+
+    if (devices.length === 0) {
+        deviceList.innerHTML = "<li>No Bluetooth Devices Found</li>";
+        console.log("No Bluetooth Devices Found");
+        return;
+    }
+
+    devices.forEach(device => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<b>${device.name}</b><br/>${device.id}`;
+        listItem.dataset.deviceId = device.id;
+        deviceList.appendChild(listItem);
+    });
+
+    console.log(`Found ${devices.length} device(s).`);
+}
+
+function connectToDevice(event) {
+    const deviceId = event.target.dataset.deviceId || event.target.parentNode.dataset.deviceId;
+    if (!deviceId) {
+        console.error("Device ID not found.");
+        return;
+    }
+
+    bluetoothSerial.connect(deviceId, () => {
+        connectedDeviceId = deviceId;
+        bluetoothSerial.subscribe('\n', onDataReceived, onError);
+        console.log(`Connected to device: ${deviceId}`);
+        alert("Connected successfully!");
+    }, onError);
+}
+
+function onDataReceived(data) {
+    console.log("Data received:", data);
+    document.getElementById('resultDiv').innerHTML += `Received: ${data}<br/>`;
+}
+
+function sendData(data) {
+    if (!connectedDeviceId) {
+        alert("No device connected.");
+        return;
+    }
+
+    bluetoothSerial.write(data, () => {
+        console.log("Data sent:", data);
+        document.getElementById('resultDiv').innerHTML += `Sent: ${data}<br/>`;
+    }, onError);
+}
+
+function disconnectDevice() {
+    if (!connectedDeviceId) {
+        alert("No device connected.");
+        return;
+    }
+
+    bluetoothSerial.disconnect(() => {
+        console.log("Disconnected from device:", connectedDeviceId);
+        connectedDeviceId = null;
+        alert("Disconnected successfully!");
+    }, onError);
+}
+
+function onError(error) {
+    console.error("Bluetooth Error:", error);
+    alert("Bluetooth Error: " + error);
+}
+
+// Example usage: Sending data
+document.getElementById('sendButton').addEventListener('click', () => {
+    const message = document.getElementById('messageInput').value;
+    sendData(message);
+});
 
 // Initialize AudioContext
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
