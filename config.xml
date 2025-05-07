@@ -70,6 +70,14 @@
             <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
             <uses-permission android:name="android.permission.CAMERA" />
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
+            <!-- Bluetooth permissions -->
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+            <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+            <!-- Location permission for Bluetooth scanning (required for Android 12+) -->
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <provider

@@ -26,21 +26,36 @@ let connectedDeviceId = null;
 
 function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    permissions.requestPermission(permissions.BLUETOOTH_SCAN, success, error);
-    permissions.requestPermission(permissions.BLUETOOTH_ADVERTISE, success, error);
-    permissions.requestPermission(permissions.BLUETOOTH_CONNECT, success, error);
-    
-    function error() {
-        console.warn('permissions is not turned on');
-    }
 
-    function success( status ) {
-        if( !status.hasPermission ) error();
+    // Request Bluetooth permissions
+    if (cordova.platformId === 'android') {
+        const permissions = cordova.plugins.permissions;
+        const requiredPermissions = [
+            permissions.BLUETOOTH_SCAN,
+            permissions.BLUETOOTH_ADVERTISE,
+            permissions.BLUETOOTH_CONNECT
+        ];
+
+        permissions.requestPermissions(requiredPermissions, (status) => {
+            if (status.hasPermission) {
+                console.log('Bluetooth permissions granted.');
+                initializeApp();
+            } else {
+                console.warn('Bluetooth permissions denied.');
+                alert('Bluetooth permissions are required for this app to function.');
+            }
+        }, (error) => {
+            console.error('Error requesting Bluetooth permissions:', error);
+        });
+    } else {
+        initializeApp(); // For platforms other than Android
     }
+}
+
+function initializeApp() {
     refreshDeviceList();
     bindBluetoothEvents();
     updateUI(false); // Initially, no device is connected
-
 }
 
 function bindBluetoothEvents() {

@@ -135,3 +135,19 @@ div.stick {
     position: relative;
     transition: 300ms 0ms cubic-bezier(.32,1.44,.59,.99) ;
 }
+
+#bluetoothControls {
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+#resultDiv {
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+#messageInputContainer {
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+button {
+    z-index: 1000; /* Ensure buttons are always visible */
+}
