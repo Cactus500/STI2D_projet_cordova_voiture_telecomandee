@@ -91,27 +91,47 @@ function updateUI(isConnected) {
 }
 
 function refreshDeviceList() {
-    bluetoothSerial.list(onDeviceList, onError);
-}
-
-function onDeviceList(devices) {
+    // Clear the device list
     const deviceList = document.getElementById('deviceList');
-    deviceList.innerHTML = ""; // Clear the list
+    deviceList.innerHTML = ""; 
 
-    if (devices.length === 0) {
-        deviceList.innerHTML = "<li>No Bluetooth Devices Found</li>";
-        console.log("No Bluetooth Devices Found");
-        return;
-    }
+    // Discover paired devices
+    bluetoothSerial.list((pairedDevices) => {
+        if (pairedDevices.length > 0) {
+            const pairedHeader = document.createElement('li');
+            pairedHeader.innerHTML = "<b>Paired Devices:</b>";
+            deviceList.appendChild(pairedHeader);
 
-    devices.forEach(device => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<b>${device.name}</b><br/>${device.id}`;
-        listItem.dataset.deviceId = device.id;
-        deviceList.appendChild(listItem);
-    });
+            pairedDevices.forEach(device => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<b>${device.name}</b><br/>${device.id}`;
+                listItem.dataset.deviceId = device.id;
+                deviceList.appendChild(listItem);
+            });
+        }
 
-    console.log(`Found ${devices.length} device(s).`);
+        // Discover unpaired devices
+        bluetoothSerial.discoverUnpaired((unpairedDevices) => {
+            if (unpairedDevices.length > 0) {
+                const unpairedHeader = document.createElement('li');
+                unpairedHeader.innerHTML = "<b>Unpaired Devices:</b>";
+                deviceList.appendChild(unpairedHeader);
+
+                unpairedDevices.forEach(device => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<b>${device.name || "Unknown Device"}</b><br/>${device.id}`;
+                    listItem.dataset.deviceId = device.id;
+                    deviceList.appendChild(listItem);
+                });
+            }
+
+            if (pairedDevices.length === 0 && unpairedDevices.length === 0) {
+                deviceList.innerHTML = "<li>No Bluetooth Devices Found</li>";
+            }
+
+            console.log(`Found ${pairedDevices.length} paired device(s) and ${unpairedDevices.length} unpaired device(s).`);
+        }, onError);
+    }, onError);
 }
 
 function connectToDevice(event) {
