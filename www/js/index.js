@@ -28,12 +28,21 @@ function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     refreshDeviceList();
     bindBluetoothEvents();
+    updateUI(false); // Initially, no device is connected
 }
 
 function bindBluetoothEvents() {
     document.getElementById('refreshButton').addEventListener('click', refreshDeviceList, false);
     document.getElementById('disconnectButton').addEventListener('click', disconnectDevice, false);
     document.getElementById('deviceList').addEventListener('click', connectToDevice, false);
+}
+
+function updateUI(isConnected) {
+    document.getElementById('refreshButton').style.display = isConnected ? 'none' : 'inline-block';
+    document.getElementById('disconnectButton').style.display = isConnected ? 'inline-block' : 'none';
+    document.getElementById('deviceList').style.display = isConnected ? 'none' : 'block';
+    document.getElementById('messageInput').disabled = !isConnected;
+    document.getElementById('sendButton').disabled = !isConnected;
 }
 
 function refreshDeviceList() {
@@ -72,6 +81,7 @@ function connectToDevice(event) {
         bluetoothSerial.subscribe('\n', onDataReceived, onError);
         console.log(`Connected to device: ${deviceId}`);
         alert("Connected successfully!");
+        updateUI(true); // Update UI to reflect connection
     }, onError);
 }
 
@@ -102,6 +112,7 @@ function disconnectDevice() {
         console.log("Disconnected from device:", connectedDeviceId);
         connectedDeviceId = null;
         alert("Disconnected successfully!");
+        updateUI(false); // Update UI to reflect disconnection
     }, onError);
 }
 

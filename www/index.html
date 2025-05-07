@@ -38,6 +38,15 @@
     </head>
     <body>
         <button id="testSound" style="position: absolute; top: 10px; left: 10px; z-index: 1000;">Test Sound</button>
+        
+        <!-- Bluetooth Controls -->
+        <div id="bluetoothControls" style="margin: 20px;">
+            <button id="refreshButton">Refresh Devices</button>
+            <button id="disconnectButton" style="display: none;">Disconnect</button>
+            <ul id="deviceList"></ul>
+        </div>
+
+        <!-- Joystick and LED Controls -->
         <div class="cont horiz">
             <div id="joystick" class="joystick element">
                 <div id="stick" class="stick"></div>
@@ -52,6 +61,16 @@
                 <div class="gobtn element"></div>
             </div>
         </div>
+
+        <!-- Result Display -->
+        <div id="resultDiv" style="margin: 20px; border: 1px solid #ccc; padding: 10px; height: 100px; overflow-y: auto;"></div>
+        
+        <!-- Message Input -->
+        <div style="margin: 20px;">
+            <input id="messageInput" type="text" placeholder="Enter message" />
+            <button id="sendButton">Send</button>
+        </div>
+
         <script src="cordova.js"></script>
         <script src="js/index.js"></script>
     </body>
