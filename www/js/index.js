@@ -138,8 +138,11 @@ function connectToDevice(event) {
     const deviceId = event.target.dataset.deviceId || event.target.parentNode.dataset.deviceId;
     if (!deviceId) {
         console.error("Device ID not found.");
+        alert("Device ID not found. Please select a valid device.");
         return;
     }
+
+    console.log(`Attempting to connect to device: ${deviceId}`);
 
     bluetoothSerial.connect(deviceId, () => {
         connectedDeviceId = deviceId;
@@ -147,7 +150,10 @@ function connectToDevice(event) {
         console.log(`Connected to device: ${deviceId}`);
         alert("Connected successfully!");
         updateUI(true); // Update UI to reflect connection
-    }, onError);
+    }, (error) => {
+        console.error("Bluetooth Error: Unable to connect to device", error);
+        alert("Bluetooth Error: Unable to connect to device. Please ensure the device is in pairing mode and try again.");
+    });
 }
 
 function onDataReceived(data) {
