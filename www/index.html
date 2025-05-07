@@ -40,10 +40,10 @@
         <button id="testSound" style="position: absolute; top: 10px; left: 10px; z-index: 1000;">Test Sound</button>
         
         <!-- Bluetooth Controls -->
-        <div id="bluetoothControls" style="margin: 20px;">
-            <button id="refreshButton">Refresh Devices</button>
-            <button id="disconnectButton" style="display: none;">Disconnect</button>
-            <ul id="deviceList"></ul>
+        <div id="bluetoothControls" style="position: absolute; top: 50px; left: 10px; z-index: 1000; display: none;">
+            <button id="refreshButton" style="margin-bottom: 10px;">Refresh Devices</button>
+            <button id="disconnectButton" style="margin-bottom: 10px; display: none;">Disconnect</button>
+            <ul id="deviceList" style="list-style: none; padding: 0; margin: 0;"></ul>
         </div>
 
         <!-- Joystick and LED Controls -->
@@ -63,10 +63,10 @@
         </div>
 
         <!-- Result Display -->
-        <div id="resultDiv" style="margin: 20px; border: 1px solid #ccc; padding: 10px; height: 100px; overflow-y: auto;"></div>
+        <div id="resultDiv" style="position: absolute; bottom: 10px; left: 10px; width: 90%; height: 100px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; display: none;"></div>
         
         <!-- Message Input -->
-        <div style="margin: 20px;">
+        <div id="messageInputContainer" style="position: absolute; bottom: 120px; left: 10px; display: none;">
             <input id="messageInput" type="text" placeholder="Enter message" />
             <button id="sendButton">Send</button>
         </div>

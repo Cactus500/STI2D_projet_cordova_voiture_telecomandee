@@ -26,9 +26,21 @@ let connectedDeviceId = null;
 
 function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+    permissions.requestPermission(permissions.BLUETOOTH_SCAN, success, error);
+    permissions.requestPermission(permissions.BLUETOOTH_ADVERTISE, success, error);
+    permissions.requestPermission(permissions.BLUETOOTH_CONNECT, success, error);
+    
+    function error() {
+        console.warn('permissions is not turned on');
+    }
+
+    function success( status ) {
+        if( !status.hasPermission ) error();
+    }
     refreshDeviceList();
     bindBluetoothEvents();
     updateUI(false); // Initially, no device is connected
+
 }
 
 function bindBluetoothEvents() {
@@ -38,11 +50,25 @@ function bindBluetoothEvents() {
 }
 
 function updateUI(isConnected) {
-    document.getElementById('refreshButton').style.display = isConnected ? 'none' : 'inline-block';
-    document.getElementById('disconnectButton').style.display = isConnected ? 'inline-block' : 'none';
-    document.getElementById('deviceList').style.display = isConnected ? 'none' : 'block';
-    document.getElementById('messageInput').disabled = !isConnected;
-    document.getElementById('sendButton').disabled = !isConnected;
+    const bluetoothControls = document.getElementById('bluetoothControls');
+    const refreshButton = document.getElementById('refreshButton');
+    const disconnectButton = document.getElementById('disconnectButton');
+    const deviceList = document.getElementById('deviceList');
+    const resultDiv = document.getElementById('resultDiv');
+    const messageInputContainer = document.getElementById('messageInputContainer');
+
+    if (isConnected) {
+        bluetoothControls.style.display = 'none';
+        disconnectButton.style.display = 'inline-block';
+        resultDiv.style.display = 'block';
+        messageInputContainer.style.display = 'block';
+    } else {
+        bluetoothControls.style.display = 'block';
+        refreshButton.style.display = 'inline-block';
+        disconnectButton.style.display = 'none';
+        resultDiv.style.display = 'none';
+        messageInputContainer.style.display = 'none';
+    }
 }
 
 function refreshDeviceList() {
