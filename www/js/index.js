@@ -24,27 +24,67 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 let connectedDeviceId = null;
 
-// Override console.log to also display logs in the resultDiv
+// Throttle function to limit log frequency
+function throttle(func, limit) {
+    let lastCall = 0;
+    return function (...args) {
+        const now = Date.now();
+        if (now - lastCall >= limit) {
+            lastCall = now;
+            func.apply(this, args);
+        }
+    };
+}
+
+// Throttle function to limit Bluetooth message frequency
+function throttleBluetooth(func, limit) {
+    let lastCall = 0;
+    return function (...args) {
+        const now = Date.now();
+        if (now - lastCall >= limit) {
+            lastCall = now;
+            func.apply(this, args);
+        }
+    };
+}
+
+// Throttled Bluetooth write function
+const throttledBluetoothWrite = throttleBluetooth(function (data) {
+    if (typeof bluetoothSerial !== 'undefined') {
+        bluetoothSerial.write(data,
+            function () {
+                console.log("Data sent successfully:", data);
+            },
+            function (error) {
+                console.error("Error sending data:", error);
+            }
+        );
+    } else {
+        console.warn("bluetoothSerial is not available. Data not sent:", data);
+    }
+}, 500); // 500ms throttle
+
+// Override console.log to also display logs in the resultDiv, throttled to 0.5 seconds
 const originalConsoleLog = console.log;
-console.log = function (...args) {
+console.log = throttle(function (...args) {
     originalConsoleLog.apply(console, args); // Call the original console.log
     const resultDiv = document.getElementById('resultDiv');
     if (resultDiv) {
         resultDiv.innerHTML += `Log: ${args.join(' ')}<br/>`;
         resultDiv.scrollTop = resultDiv.scrollHeight; // Auto-scroll to the bottom
     }
-};
+}, 500); // 500ms throttle
 
-// Override console.error to also display errors in the resultDiv
+// Override console.error to also display errors in the resultDiv, throttled to 0.5 seconds
 const originalConsoleError = console.error;
-console.error = function (...args) {
+console.error = throttle(function (...args) {
     originalConsoleError.apply(console, args); // Call the original console.error
     const resultDiv = document.getElementById('resultDiv');
     if (resultDiv) {
         resultDiv.innerHTML += `<span style="color: red;">Error: ${args.join(' ')}</span><br/>`;
         resultDiv.scrollTop = resultDiv.scrollHeight; // Auto-scroll to the bottom
     }
-};
+}, 500); // 500ms throttle
 
 function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
@@ -318,6 +358,32 @@ var motor = 1;
 let lastMotorState = null; // Track the last motor state
 dragElement(stick);
 
+// Variables to track the latest states
+let latestServo = 90; // Default servo position
+let latestMotor = 0;  // Default motor state (stopped)
+let latestLedState = 0; // Default LED state (off)
+
+// Function to send the latest Bluetooth data
+function sendLatestBluetoothData() {
+    if (!connectedDeviceId) {
+        console.warn("No device connected. Skipping Bluetooth data send.");
+        return;
+    }
+
+    const dataToSend = JSON.stringify({ S: latestServo, M: latestMotor, L: latestLedState }) + "\n";
+    bluetoothSerial.write(dataToSend,
+        function () {
+            console.log("Periodic data sent successfully:", dataToSend);
+        },
+        function (error) {
+            console.error("Error sending periodic data:", error);
+        }
+    );
+}
+
+// Start a periodic sender to send Bluetooth data every 500ms
+setInterval(sendLatestBluetoothData, 500);
+
 function dragElement(elmnt) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
@@ -368,34 +434,6 @@ function dragElement(elmnt) {
     const maxTop = container.offsetHeight + 36 - elmnt.offsetHeight;
 
     newTop = Math.min(Math.max(newTop, minTop), maxTop);
-    newLeft = Math.min(Math.max(newLeft, minLeft), maxLeft);
-
-    // Set the new position
-    elmnt.style.top = newTop + "px";
-    elmnt.style.left = newLeft + "px";
-
-    console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
-
-    // RightLeft turn movement
-    servo = (((stick.offsetLeft / cwidth) * 40) + 70).toFixed();
-
-    if (90 < servo && servo < 100) {
-      servo = 90;
-    } else {
-      servo = servo;
-    }
-
-    // Determine motor state
-    let newMotorState;
-    if (stick.offsetTop < (cmiddle + 6.5)) {
-        newMotorState = 1; // Forward
-    } else if (stick.offsetTop > (cmiddle + 6.5)) {
-        newMotorState = -1; // Backward
-    } else {
-        newMotorState = 0; // Stop
-    }
-
-    // Play motor sound only if motor state has changed
     if (newMotorState !== lastMotorState) {
         if (newMotorState === 1) {
             playMotorSound(800, 300); // Forward movement
@@ -428,6 +466,10 @@ function dragElement(elmnt) {
     } else {
         console.warn("bluetoothSerial is not available. Data not sent:", dataToSend);
     }
+
+    // Update the latest servo and motor states
+    latestServo = servo;
+    latestMotor = motor;
   }
 
   function closeDragElement() {
@@ -463,6 +505,10 @@ function dragElement(elmnt) {
     } else {
         console.warn("bluetoothSerial is not available. Reset data not sent:", resetData);
     }
+
+    // Update the latest servo and motor states
+    latestServo = servo;
+    latestMotor = motor;
   }
 }
 
@@ -496,4 +542,7 @@ IO.addEventListener('click', function () {
     } else {
         console.warn("bluetoothSerial is not available. LED state not sent:", ledData);
     }
+
+    // Update the latest LED state
+    latestLedState = isLedOn ? 1 : 0;
 });

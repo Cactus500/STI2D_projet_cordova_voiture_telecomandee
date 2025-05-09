@@ -124,8 +124,8 @@ div.stick {
     /*transform: translate(-50%, -50%);*/
     cursor: grab;
 }
-.bgood {}
-.bbad {}
+
+
 .tip {
     aspect-ratio: 1 / 1;
     width: 14pt;
