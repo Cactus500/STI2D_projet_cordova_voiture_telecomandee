@@ -64,27 +64,27 @@ const throttledBluetoothWrite = throttleBluetooth(function (data) {
     }
 }, 500); // 500ms throttle
 
-// Override console.log to also display logs in the resultDiv, throttled to 0.5 seconds
+// Override console.log to also display logs in the resultDiv
 const originalConsoleLog = console.log;
-console.log = throttle(function (...args) {
+console.log = function (...args) {
     originalConsoleLog.apply(console, args); // Call the original console.log
     const resultDiv = document.getElementById('resultDiv');
     if (resultDiv) {
         resultDiv.innerHTML += `Log: ${args.join(' ')}<br/>`;
         resultDiv.scrollTop = resultDiv.scrollHeight; // Auto-scroll to the bottom
     }
-}, 500); // 500ms throttle
+};
 
-// Override console.error to also display errors in the resultDiv, throttled to 0.5 seconds
+// Override console.error to also display errors in the resultDiv
 const originalConsoleError = console.error;
-console.error = throttle(function (...args) {
+console.error = function (...args) {
     originalConsoleError.apply(console, args); // Call the original console.error
     const resultDiv = document.getElementById('resultDiv');
     if (resultDiv) {
         resultDiv.innerHTML += `<span style="color: red;">Error: ${args.join(' ')}</span><br/>`;
         resultDiv.scrollTop = resultDiv.scrollHeight; // Auto-scroll to the bottom
     }
-}, 500); // 500ms throttle
+};
 
 function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
@@ -367,116 +367,109 @@ let isSending = false; // Prevent sending too frequently
 
 // Function to send Bluetooth data if there are changes
 function sendBluetoothData() {
-    if (isSending) return; // Prevent sending if a message is already being sent
-
     const dataToSend = JSON.stringify({ S: latestServo, M: latestMotor, L: latestLedState }) + "\n";
 
     // Only send if the data has changed
-    if (dataToSend !== lastSentData) {
+    if (dataToSend !== lastSentData && !isSending) {
         isSending = true; // Mark as sending
         lastSentData = dataToSend; // Update the last sent data
 
         bluetoothSerial.write(dataToSend,
             function () {
                 console.log("Data sent successfully:", dataToSend);
-                isSending = false; // Allow sending the next message after 250ms
+                isSending = false; // Allow sending the next message
             },
             function (error) {
                 console.error("Error sending data:", error);
-                isSending = false; // Allow sending the next message after 250ms
+                isSending = false; // Allow sending the next message
             }
         );
-
-        // Add a 250ms delay before allowing the next send
-        setTimeout(() => {
-            isSending = false;
-        }, 250);
     }
 }
 
 function dragElement(elmnt) {
-  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
-  elmnt.onmousedown = dragMouseDown;
-  elmnt.ontouchstart = touchStart;
+    elmnt.onmousedown = dragMouseDown;
+    elmnt.ontouchstart = touchStart;
 
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // Get the mouse cursor position at the start
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    document.onmousemove = elementDrag;
-  }
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Get the mouse cursor position at the start
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
 
-  function touchStart(e) {
-    e.preventDefault();
-    // Get the touch position at the start
-    pos3 = e.touches[0].clientX;
-    pos4 = e.touches[0].clientY;
-    document.ontouchend = closeDragElement;
-    document.ontouchmove = elementDrag;
-  }
-  
-  function elementDrag(e) {
-    elmnt.style.transition = "none";
-    e = e || window.event;
-    e.preventDefault();
-    // For touch events
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    function touchStart(e) {
+        e.preventDefault();
+        // Get the touch position at the start
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        document.ontouchend = closeDragElement;
+        document.ontouchmove = elementDrag;
+    }
 
-    // Calculate the new cursor/touch position
-    pos1 = pos3 - clientX;
-    pos2 = pos4 - clientY;
-    pos3 = clientX;
-    pos4 = clientY;
+    function elementDrag(e) {
+        elmnt.style.transition = "none";
+        e = e || window.event;
+        e.preventDefault();
+        // For touch events
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-    // Calculate new position of the `stick`
-    let newTop = elmnt.offsetTop - pos2;
-    let newLeft = elmnt.offsetLeft - pos1;
+        // Calculate the new cursor/touch position
+        pos1 = pos3 - clientX;
+        pos2 = pos4 - clientY;
+        pos3 = clientX;
+        pos4 = clientY;
 
-    // Constrain the `stick` within the `joystick` container boundaries
-    const minLeft = 34;
-    const maxLeft = container.offsetWidth + 36 - elmnt.offsetWidth;
-    const minTop = 34;
-    const maxTop = container.offsetHeight + 36 - elmnt.offsetHeight;
+        // Calculate new position of the `stick`
+        let newTop = elmnt.offsetTop - pos2;
+        let newLeft = elmnt.offsetLeft - pos1;
 
-    newTop = Math.min(Math.max(newTop, minTop), maxTop);
-    newLeft = Math.min(Math.max(newLeft, minLeft), maxLeft);
+        // Constrain the `stick` within the `joystick` container boundaries
+        const minLeft = 34;
+        const maxLeft = container.offsetWidth + 36 - elmnt.offsetWidth;
+        const minTop = 34;
+        const maxTop = container.offsetHeight + 36 - elmnt.offsetHeight;
 
-    // Set the new position
-    elmnt.style.top = newTop + "px";
-    elmnt.style.left = newLeft + "px";
+        newTop = Math.min(Math.max(newTop, minTop), maxTop);
+        newLeft = Math.min(Math.max(newLeft, minLeft), maxLeft);
 
-    console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
+        // Set the new position
+        elmnt.style.top = newTop + "px";
+        elmnt.style.left = newLeft + "px";
 
-    // Update servo and motor values based on joystick position
-    latestServo = (((stick.offsetLeft / cwidth) * 40) + 70).toFixed();
-    latestMotor = stick.offsetTop < cmiddle ? 1 : (stick.offsetTop > cmiddle ? -1 : 0);
+        console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
 
-    // Send Bluetooth data
-    sendBluetoothData();
-  }
+        // Update servo and motor values based on joystick position
+        latestServo = (((stick.offsetLeft / cwidth) * 40) + 70).toFixed();
+        latestMotor = stick.offsetTop < cmiddle ? 1 : (stick.offsetTop > cmiddle ? -1 : 0);
 
-  function closeDragElement() {
-    // Stop moving when mouse/touch is released
-    document.onmouseup = null;
-    document.onmousemove = null;
-    document.ontouchend = null;
-    document.ontouchmove = null;
-    elmnt.style.transition = "cubic-bezier(.6,1.55,.65,1) 300ms 0ms";
-    elmnt.style.left = cmiddle + 6.5 + "px";
-    elmnt.style.top = cmiddle + 6.5 + "px";
+        // Send Bluetooth data
+        sendBluetoothData();
+    }
 
-    console.log(`Stick position reset. X: ${stick.offsetLeft}, Y: ${stick.offsetTop}`);
-    latestServo = 90;
-    latestMotor = 0;
+    function closeDragElement() {
+        // Stop moving when mouse/touch is released
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+        elmnt.style.transition = "cubic-bezier(.6,1.55,.65,1) 300ms 0ms";
+        elmnt.style.left = cmiddle + 6.5 + "px";
+        elmnt.style.top = cmiddle + 6.5 + "px";
 
-    // Send Bluetooth data
-    sendBluetoothData();
-  }
+        console.log(`Stick position reset. X: ${stick.offsetLeft}, Y: ${stick.offsetTop}`);
+        latestServo = 90;
+        latestMotor = 0;
+
+        // Send Bluetooth data
+        sendBluetoothData();
+    }
 }
 
 const IO = document.querySelector('.IO');
