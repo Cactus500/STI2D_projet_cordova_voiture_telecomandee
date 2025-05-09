@@ -354,7 +354,7 @@ function dragElement(elmnt) {
     console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
 
     // RightLeft turn movement
-    servo = (((stick.offsetLeft / cwidth) * 97.5) + 40).toFixed();
+    servo = (((stick.offsetLeft / cwidth) * 40) + 70).toFixed();
 
     if (90 < servo && servo < 100) {
       servo = 90;
@@ -392,7 +392,7 @@ function dragElement(elmnt) {
     playNote(servo * 5, 1000); // Adjust frequency based on servo position
 
     // Send data over Bluetooth
-    const dataToSend = JSON.stringify({ S: servo, M: motor} + "\n");
+    var dataToSend = JSON.stringify({ S: servo, M: motor} + "\n");
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(dataToSend,
             function() {
