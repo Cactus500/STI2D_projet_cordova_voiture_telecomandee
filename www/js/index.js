@@ -358,31 +358,41 @@ var motor = 1;
 let lastMotorState = null; // Track the last motor state
 dragElement(stick);
 
-// Variables to track the latest states
+// Variables to track the latest states and changes
 let latestServo = 90; // Default servo position
 let latestMotor = 0;  // Default motor state (stopped)
 let latestLedState = 0; // Default LED state (off)
+let lastSentData = ""; // Track the last sent Bluetooth data
+let isSending = false; // Prevent sending too frequently
 
-// Function to send the latest Bluetooth data
-function sendLatestBluetoothData() {
-    if (!connectedDeviceId) {
-        console.warn("No device connected. Skipping Bluetooth data send.");
-        return;
-    }
+// Function to send Bluetooth data if there are changes
+function sendBluetoothData() {
+    if (isSending) return; // Prevent sending if a message is already being sent
 
     const dataToSend = JSON.stringify({ S: latestServo, M: latestMotor, L: latestLedState }) + "\n";
-    bluetoothSerial.write(dataToSend,
-        function () {
-            console.log("Periodic data sent successfully:", dataToSend);
-        },
-        function (error) {
-            console.error("Error sending periodic data:", error);
-        }
-    );
-}
 
-// Start a periodic sender to send Bluetooth data every 500ms
-setInterval(sendLatestBluetoothData, 500);
+    // Only send if the data has changed
+    if (dataToSend !== lastSentData) {
+        isSending = true; // Mark as sending
+        lastSentData = dataToSend; // Update the last sent data
+
+        bluetoothSerial.write(dataToSend,
+            function () {
+                console.log("Data sent successfully:", dataToSend);
+                isSending = false; // Allow sending the next message after 250ms
+            },
+            function (error) {
+                console.error("Error sending data:", error);
+                isSending = false; // Allow sending the next message after 250ms
+            }
+        );
+
+        // Add a 250ms delay before allowing the next send
+        setTimeout(() => {
+            isSending = false;
+        }, 250);
+    }
+}
 
 function dragElement(elmnt) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -434,42 +444,20 @@ function dragElement(elmnt) {
     const maxTop = container.offsetHeight + 36 - elmnt.offsetHeight;
 
     newTop = Math.min(Math.max(newTop, minTop), maxTop);
-    if (newMotorState !== lastMotorState) {
-        if (newMotorState === 1) {
-            playMotorSound(800, 300); // Forward movement
-        } else if (newMotorState === -1) {
-            playMotorSound(1000, 300); // Backward movement
-        } else {
-            playMotorSound(1200, 300); // Stop
-        }
-        lastMotorState = newMotorState; // Update the last motor state
-    }
+    newLeft = Math.min(Math.max(newLeft, minLeft), maxLeft);
 
-    motor = newMotorState;
+    // Set the new position
+    elmnt.style.top = newTop + "px";
+    elmnt.style.left = newLeft + "px";
 
-    console.log(`Servo : ${servo}, Motors : ${motor}`);
+    console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
 
-    // Play note based on servo position
-    playNote(servo * 5, 1000); // Adjust frequency based on servo position
+    // Update servo and motor values based on joystick position
+    latestServo = (((stick.offsetLeft / cwidth) * 40) + 70).toFixed();
+    latestMotor = stick.offsetTop < cmiddle ? 1 : (stick.offsetTop > cmiddle ? -1 : 0);
 
-    // Send data over Bluetooth
-    const dataToSend = JSON.stringify({ S: servo, M: motor }) + "\n";
-    if (typeof bluetoothSerial !== 'undefined') {
-        bluetoothSerial.write(dataToSend,
-            function () {
-                console.log("Data sent successfully:", dataToSend);
-            },
-            function (error) {
-                console.error("Error sending data:", error);
-            }
-        );
-    } else {
-        console.warn("bluetoothSerial is not available. Data not sent:", dataToSend);
-    }
-
-    // Update the latest servo and motor states
-    latestServo = servo;
-    latestMotor = motor;
+    // Send Bluetooth data
+    sendBluetoothData();
   }
 
   function closeDragElement() {
@@ -482,33 +470,12 @@ function dragElement(elmnt) {
     elmnt.style.left = cmiddle + 6.5 + "px";
     elmnt.style.top = cmiddle + 6.5 + "px";
 
-    console.log(`Stick position X: ${stick.offsetLeft}, Stick position Y: ${stick.offsetTop}`);
-    servo = 90;
-    motor = 0;
+    console.log(`Stick position reset. X: ${stick.offsetLeft}, Y: ${stick.offsetTop}`);
+    latestServo = 90;
+    latestMotor = 0;
 
-    console.log(`Servo : ${servo}, Motors : ${motor}`);
-
-    // Play reset sound
-    playNote(1000, 100);
-
-    // Send reset data over Bluetooth
-    const resetData = JSON.stringify({ S: 90, M: 0 }) + "\n";
-    if (typeof bluetoothSerial !== 'undefined') {
-        bluetoothSerial.write(resetData,
-            function () {
-                console.log("Reset data sent successfully:", resetData);
-            },
-            function (error) {
-                console.error("Error sending reset data:", error);
-            }
-        );
-    } else {
-        console.warn("bluetoothSerial is not available. Reset data not sent:", resetData);
-    }
-
-    // Update the latest servo and motor states
-    latestServo = servo;
-    latestMotor = motor;
+    // Send Bluetooth data
+    sendBluetoothData();
   }
 }
 
@@ -525,24 +492,9 @@ IO.addEventListener('click', function () {
     // Play note for LED on/off
     playNote(isLedOn ? 1300 : 700, 100);
 
-    // Determine LED state
-    const ledState = isLedOn ? 1 : 0;
-
-    // Send LED state over Bluetooth
-    const ledData = JSON.stringify({ L: ledState }) + "\n";
-    if (typeof bluetoothSerial !== 'undefined') {
-        bluetoothSerial.write(ledData,
-            function () {
-                console.log("LED state sent successfully:", ledData);
-            },
-            function (error) {
-                console.error("Error sending LED state:", error);
-            }
-        );
-    } else {
-        console.warn("bluetoothSerial is not available. LED state not sent:", ledData);
-    }
-
     // Update the latest LED state
     latestLedState = isLedOn ? 1 : 0;
+
+    // Send Bluetooth data
+    sendBluetoothData();
 });
