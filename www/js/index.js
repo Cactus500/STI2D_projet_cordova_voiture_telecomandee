@@ -24,6 +24,28 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 let connectedDeviceId = null;
 
+// Override console.log to also display logs in the resultDiv
+const originalConsoleLog = console.log;
+console.log = function (...args) {
+    originalConsoleLog.apply(console, args); // Call the original console.log
+    const resultDiv = document.getElementById('resultDiv');
+    if (resultDiv) {
+        resultDiv.innerHTML += `Log: ${args.join(' ')}<br/>`;
+        resultDiv.scrollTop = resultDiv.scrollHeight; // Auto-scroll to the bottom
+    }
+};
+
+// Override console.error to also display errors in the resultDiv
+const originalConsoleError = console.error;
+console.error = function (...args) {
+    originalConsoleError.apply(console, args); // Call the original console.error
+    const resultDiv = document.getElementById('resultDiv');
+    if (resultDiv) {
+        resultDiv.innerHTML += `<span style="color: red;">Error: ${args.join(' ')}</span><br/>`;
+        resultDiv.scrollTop = resultDiv.scrollHeight; // Auto-scroll to the bottom
+    }
+};
+
 function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
 
@@ -168,9 +190,10 @@ function sendData(data) {
     }
 
     bluetoothSerial.write(data, () => {
-        console.log("Data sent:", data);
-        document.getElementById('resultDiv').innerHTML += `Sent: ${data}<br/>`;
-    }, onError);
+        console.log(`Sent: ${data}`);
+    }, (error) => {
+        console.error("Error sending data:", error);
+    });
 }
 
 function disconnectDevice() {
@@ -392,13 +415,13 @@ function dragElement(elmnt) {
     playNote(servo * 5, 1000); // Adjust frequency based on servo position
 
     // Send data over Bluetooth
-    var dataToSend = JSON.stringify({ S: servo, M: motor} + "\n");
+    const dataToSend = JSON.stringify({ S: servo, M: motor }) + "\n";
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(dataToSend,
-            function() {
+            function () {
                 console.log("Data sent successfully:", dataToSend);
             },
-            function(error) {
+            function (error) {
                 console.error("Error sending data:", error);
             }
         );
@@ -427,13 +450,13 @@ function dragElement(elmnt) {
     playNote(1000, 100);
 
     // Send reset data over Bluetooth
-    const resetData = JSON.stringify({ S: 90, M: 0} + "\n");
+    const resetData = JSON.stringify({ S: 90, M: 0 }) + "\n";
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(resetData,
-            function() {
+            function () {
                 console.log("Reset data sent successfully:", resetData);
             },
-            function(error) {
+            function (error) {
                 console.error("Error sending reset data:", error);
             }
         );
@@ -460,13 +483,13 @@ IO.addEventListener('click', function () {
     const ledState = isLedOn ? 1 : 0;
 
     // Send LED state over Bluetooth
-    const ledData = JSON.stringify({ L: ledState} + "\n");
+    const ledData = JSON.stringify({ L: ledState }) + "\n";
     if (typeof bluetoothSerial !== 'undefined') {
         bluetoothSerial.write(ledData,
-            function() {
+            function () {
                 console.log("LED state sent successfully:", ledData);
             },
-            function(error) {
+            function (error) {
                 console.error("Error sending LED state:", error);
             }
         );
