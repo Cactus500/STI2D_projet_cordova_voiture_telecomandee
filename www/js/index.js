@@ -367,7 +367,8 @@ let isSending = false; // Prevent sending too frequently
 
 // Function to send Bluetooth data if there are changes
 function sendBluetoothData() {
-    const dataToSend = JSON.stringify({ S: latestServo, M: latestMotor, L: latestLedState }) + "\n";
+    // Format the data as a compact string with no spaces, separated by commas, and ending with a newline
+    const dataToSend = `${latestServo},${latestMotor},${latestLedState}\n`;
 
     // Only send if the data has changed
     if (dataToSend !== lastSentData && !isSending) {
