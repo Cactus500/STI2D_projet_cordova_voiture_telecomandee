@@ -371,11 +371,12 @@ function sendBluetoothData() {
 
         bluetoothSerial.write(dataToSend,
             function () {
-                console.log("Data sent successfully:", dataToSend);
+                // Use JSON.stringify to make newline visible in logs
+                console.log("Data sent successfully:", JSON.stringify(dataToSend));
                 isSending = false; // Allow sending the next message
             },
             function (error) {
-                console.error("Error sending data:", dataToSend, error);
+                console.error("Error sending data:", JSON.stringify(dataToSend), error);
                 isSending = false; // Allow sending the next message
             }
         );
