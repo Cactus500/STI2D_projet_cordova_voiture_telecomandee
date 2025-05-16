@@ -208,7 +208,6 @@ function connectToDevice(event) {
 
     bluetoothSerial.connect(deviceId, () => {
         connectedDeviceId = deviceId;
-        bluetoothSerial.subscribe('\n', onDataReceived, onError);
         console.log(`Connected to device: ${deviceId}`);
         alert("Connected successfully!");
         updateUI(true); // Update UI to reflect connection
@@ -216,11 +215,6 @@ function connectToDevice(event) {
         console.error("Bluetooth Error: Unable to connect to device", error);
         alert("Bluetooth Error: Unable to connect to device. Please ensure the device is in pairing mode and try again.");
     });
-}
-
-function onDataReceived(data) {
-    console.log("Data received:", data);
-    document.getElementById('resultDiv').innerHTML += `Received: ${data}<br/>`;
 }
 
 function sendData(data) {
@@ -368,7 +362,7 @@ let isSending = false; // Prevent sending too frequently
 // Function to send Bluetooth data if there are changes
 function sendBluetoothData() {
     // Format the data as a compact string with no spaces, separated by commas, and ending with a newline
-    const dataToSend = `${latestServo},${latestMotor},${latestLedState}\n`;
+    var dataToSend = `${latestServo},${latestMotor},${latestLedState}\n`;
 
     // Only send if the data has changed
     if (dataToSend !== lastSentData && !isSending) {
@@ -381,7 +375,7 @@ function sendBluetoothData() {
                 isSending = false; // Allow sending the next message
             },
             function (error) {
-                console.error("Error sending data:", error);
+                console.error("Error sending data:", dataToSend, error);
                 isSending = false; // Allow sending the next message
             }
         );
